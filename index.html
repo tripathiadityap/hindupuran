@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Purāṇa Viśva — the eighteen Purāṇas, mapped</title>
+  <meta name="description" content="A calm, modern way to read and explore all eighteen Mahāpurāṇas — with a deep dive into the Garuḍa Purāṇa." />
+  <meta name="theme-color" content="#050505" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%23ffffff'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+Devanagari:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    try { const t = localStorage.getItem("pv-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <a href="#/" class="brand" aria-label="Purāṇa Viśva home">
+      <span id="brandLotus"></span>
+      <span>Purāṇa<em>Viśva</em></span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#/library" data-nav="library">Library</a>
+      <a href="#/garuda" data-nav="garuda">Garuḍa</a>
+      <a href="#/explore" data-nav="explore">Explore</a>
+      <a href="#/concepts" data-nav="concepts">Concepts</a>
+      <a href="#/reflect" data-nav="reflect">Reflect</a>
+    </nav>
+    <div class="top-actions">
+      <button class="search-btn" id="openSearch" aria-label="Search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span class="search-label">Search</span><kbd>⌘K</kbd>
+      </button>
+      <button class="music-btn" id="musicBtn" aria-pressed="false" aria-label="Toggle ambient rāga">
+        <span class="eq"><i></i><i></i><i></i><i></i></span><span class="music-label" id="musicLabel">Rāga · off</span>
+      </button>
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+
+  <footer class="footer">
+    <p>PURĀṆA VIŚVA // Summaries written for reflection, not as a substitute for the texts. Verse counts follow Bhāgavata 12.13; extant editions vary.</p>
+    <p>♪ Ambient rāgas are synthesised live in your browser — no recordings, no copyright.</p>
+  </footer>
+
+  <div class="toast" id="toast" hidden>
+    <div><b>♪ Ambient rāga</b><br/><span id="toastText">Tanpura, flute &amp; temple bells — generated live</span></div>
+    <button class="go" id="toastPlay">Play</button><button id="toastClose" aria-label="Dismiss">✕</button>
+  </div>
+
+  <div class="search" id="search" hidden>
+    <div class="search-backdrop" data-close></div>
+    <div class="search-panel" role="dialog" aria-modal="true" aria-label="Search">
+      <input id="searchInput" type="search" placeholder="Search Purāṇas, stories, deities, themes…" autocomplete="off" />
+      <ul id="searchResults" class="search-results"></ul>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
