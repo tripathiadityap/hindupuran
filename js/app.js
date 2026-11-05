@@ -134,7 +134,7 @@ function purana(id) {
     <p class="lede" style="margin-top:20px">${esc(p.tagline)}</p>
     <div class="p-meta">${gunaPill(p.guna)}<span class="tag">${fmt(p.verses)} verses</span><span class="tag">№ ${p.n} of 18</span>
       ${p.special ? `<a class="btn primary" href="#/garuda" style="padding:6px 14px">Open the deep dive →</a>` : ""}</div>
-  </div><div class="p-lotus">${lotusSVG(260)}</div></section>
+  </div><div class="p-lotus"><canvas data-lotus="mini" data-code="${p.id.toUpperCase()} // ${String(p.n).padStart(2, "0")}"></canvas></div></section>
   <section class="wrap p-body">
     <div>
       <h2>Overview</h2>
@@ -279,7 +279,8 @@ function explore() {
   return `<section class="explore">
     <div class="explore-ui">
       <p class="eyebrow">Explore</p><h2>The map</h2>
-      <p class="lede" style="font-size:15px;margin:10px 0 0">Eighteen Purāṇas, their deities, themes and stories. Tap a node to inspect it. Drag to move, scroll to zoom.</p>
+      <div class="filters" style="margin:14px 0 0"><button class="chip" data-mode="2d">2D</button><button class="chip" data-mode="3d">3D · orbit</button></div>
+      <p class="lede" style="font-size:15px;margin:10px 0 0">Eighteen Purāṇas, their deities, themes and stories. Tap a node to inspect it. In 3D, drag to orbit; in 2D, drag to pan. Scroll to zoom.</p>
       <div class="legend">
         <span>● Sāttvika Purāṇa</span><span>■ Rājasika Purāṇa</span><span>◆ Tāmasika Purāṇa</span>
         <span>▪ Deity</span><span>○ Theme</span><span>· Story</span>
@@ -392,15 +393,23 @@ function route() {
   document.title = (titles[top] ? titles[top] + " · " : "") + "Purāṇa Viśva";
   if (top === "explore") {
     document.querySelector(".footer").hidden = true;
-    graph = mountGraph($(".explore"), { onSelect: inspect, colors: cssColors });
+    const mode = store.get("pv-graph-mode", "3d");
+    graph = mountGraph($(".explore"), { onSelect: inspect, colors: cssColors, mode });
+    const syncMode = m => app.querySelectorAll("[data-mode]").forEach(b => b.classList.toggle("on", b.dataset.mode === m));
+    syncMode(mode);
+    app.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => { graph.setMode(b.dataset.mode); store.set("pv-graph-mode", b.dataset.mode); syncMode(b.dataset.mode); });
     if (params.get("focus")) graph.select(params.get("focus"));
   } else {
     document.querySelector(".footer").hidden = false;
   }
   if (top === "reflect") bindReflect();
-  app.querySelectorAll("[data-lotus]").forEach(cv => lotuses.push(mountLotus(cv, cv.dataset.lotus === "garuda"
-    ? { label: "GARUDA // PRETA_KHANDA", code: "CAM_17 / YAMAPATH", mode: "SOUL_TRACK: ACTIVE", motes: 18, tags: ["MRTYU", "PINDA", "SAPINDIKARANA", "VAITARANI", "CITRAGUPTA", "YAMA", "KARMA", "MOKSHA"] }
-    : {})));
+  app.querySelectorAll("[data-lotus]").forEach(cv => {
+    const kind = cv.dataset.lotus;
+    const opts = kind === "garuda"
+      ? { label: "GARUDA // PRETA_KHANDA", code: "CAM_17 / YAMAPATH", mode: "SOUL_TRACK: ACTIVE", motes: 18, pitch: .62, spin: -.14, tags: ["MRTYU", "PINDA", "SAPINDIKARANA", "VAITARANI", "CITRAGUPTA", "YAMA", "KARMA", "MOKSHA"] }
+      : kind === "mini" ? { minimal: true, code: cv.dataset.code, scale: .46, cy: .62, spin: .25 } : {};
+    lotuses.push(mountLotus(cv, opts));
+  });
   app.querySelectorAll(".sec-id").forEach((el, i) => { el.textContent = `SEC_${String(i + 1).padStart(2, "0")} // ${(top || "home").toUpperCase()}`; });
   audio.setRaga(RAGA_FOR[top] || "bhupali");
   if (!params.has("focus")) window.scrollTo(0, 0);
