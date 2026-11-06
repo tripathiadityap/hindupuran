@@ -73,7 +73,7 @@ function home() {
     <div class="section-head"><div><p class="eyebrow">Read · Ask</p><h2>All of it, in full.<br/><em>Ask it anything.</em></h2>
       <p class="muted">1,29,000+ Sanskrit verses from fourteen Purāṇas, five complete English translations — and a search that finds passages by meaning.</p></div></div>
     <form class="ask-form hud" onsubmit="event.preventDefault();location.hash='#/ask?q='+encodeURIComponent(this.q.value)">
-      <textarea name="q" rows="2" placeholder="Ask the Purāṇas… e.g. what happens after we die?"></textarea>
+      <textarea name="q" rows="2" placeholder="Ask the Purāṇas… e.g. why am I sad?"></textarea>
       <div class="ask-row"><span class="mono muted">COSINE SIMILARITY · ON-DEVICE</span><span class="btns"><a class="btn" href="#/read">Open the reader</a><button class="btn primary" type="submit">Ask →</button></span></div>
     </form>
   </section>

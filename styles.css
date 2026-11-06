@@ -410,3 +410,16 @@ textarea:focus { outline: none; border-color: var(--ink); }
   .verse p.dev { font-size: 20px; }
   .ask-form textarea { font-size: 20px; }
 }
+
+/* ── Answer card ──────────────────────── */
+.answer { background: var(--bg); padding: 30px 30px 26px; border: 1px solid var(--ink); }
+.answer h3 { font-size: clamp(30px, 4vw, 44px); margin: 6px 0 16px; }
+.answer-text { font: 400 21px/1.65 var(--serif); color: var(--ink); margin: 0 0 26px; max-width: 760px; }
+.answer-verse { margin: 0 0 24px; padding: 22px 0 4px 22px; border-left: 2px solid var(--ink); }
+.answer-verse .dev { font: 400 24px/1.8 var(--dev); margin: 0 0 8px; }
+.answer-verse .iast { font: 400 14px/1.6 var(--mono); color: var(--muted); margin: 0 0 16px; }
+.answer-verse blockquote { margin: 0 0 12px; font: 400 italic 22px/1.45 var(--serif); }
+.answer-verse figcaption { font: 400 11px var(--mono); color: var(--muted); letter-spacing: .04em; }
+.answer-care { border: 1px dashed var(--line-2); padding: 12px 14px; margin-top: 18px; }
+.ask-sub { background: var(--bg); padding: 22px 24px 0; margin: 0; }
+@media (max-width: 720px) { .answer { padding: 22px 18px; } .answer-text { font-size: 19px; } .answer-verse .dev { font-size: 20px; } }

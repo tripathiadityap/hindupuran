@@ -22,7 +22,7 @@ const C = { k: "क", kh: "ख", g: "ग", gh: "घ", "ṅ": "ङ", c: "च", ch
   "ś": "श", "ṣ": "ष", s: "स", h: "ह", "ḻ": "ळ" };
 const OTHER = { "ṃ": "ं", "ṁ": "ं", "ḥ": "ः", "'": "ऽ", "’": "ऽ", "/": "।", "|": "।", "0": "०", "1": "१", "2": "२", "3": "३", "4": "४", "5": "५", "6": "६", "7": "७", "8": "८", "9": "९" };
 export function toDeva(src) {
-  const s = src.normalize("NFC").toLowerCase();
+  const s = src.normalize("NFC").toLowerCase().replace(/(\S)-(?=\S)/g, "$1");
   let out = "", pend = false; // pending consonant awaiting a vowel
   for (let i = 0; i < s.length;) {
     const two = s.slice(i, i + 2), one = s[i];
