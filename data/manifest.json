@@ -1,0 +1,130 @@
+{
+"garuda": {
+"en": {
+"title": "The Garuda Puranam",
+"by": "tr. Manmatha Nath Dutt",
+"year": "1908",
+"sections": 135
+},
+"sa": {
+"title": "",
+"sections": 318,
+"verses": 11961
+}
+},
+"markandeya": {
+"en": {
+"title": "The Markandeya Purana",
+"by": "tr. F. Eden Pargiter",
+"year": "1904",
+"sections": 130
+},
+"sa": {
+"title": "Mārkaṇḍeyapurāṇa (1–93)",
+"sections": 91,
+"verses": 4525
+}
+},
+"vishnu": {
+"en": {
+"title": "The Vishnu Purana",
+"by": "English prose version after H. H. Wilson",
+"year": "1895 edition",
+"sections": 108
+},
+"sa": {
+"title": "",
+"sections": 126,
+"verses": 6370
+}
+},
+"matsya": {
+"en": {
+"title": "The Matsya Puranam",
+"by": "tr. a Taluqdar of Oudh (Sacred Books of the Hindus)",
+"year": "1916–17",
+"sections": 186
+},
+"sa": {
+"title": "Matsyapurāṇa (1–176)",
+"sections": 177,
+"verses": 8544
+}
+},
+"agni": {
+"en": {
+"title": "Agni Puranam",
+"by": "tr. Manmatha Nath Dutt",
+"year": "1903–04",
+"sections": 293
+},
+"sa": {
+"title": "",
+"sections": 383,
+"verses": 11691
+}
+},
+"narada": {
+"sa": {
+"title": "",
+"sections": 167,
+"verses": 15593
+}
+},
+"vamana": {
+"sa": {
+"title": "Vāmanapurāṇa (1–69)",
+"sections": 69,
+"verses": 4504
+}
+},
+"linga": {
+"sa": {
+"title": "Liṅgapurāṇa · part 1",
+"sections": 108,
+"verses": 6831
+}
+},
+"brahmanda": {
+"sa": {
+"title": "",
+"sections": 156,
+"verses": 13743
+}
+},
+"brahma": {
+"sa": {
+"title": "Brahmapurāṇa (1–246)",
+"sections": 247,
+"verses": 13900
+}
+},
+"shiva": {
+"sa": {
+"title": "Śivapurāṇa · books 1 and 7",
+"sections": 102,
+"verses": 5754
+}
+},
+"bhagavata": {
+"sa": {
+"title": "",
+"sections": 328,
+"verses": 13626
+}
+},
+"skanda": {
+"sa": {
+"title": "Skandapurāṇa · Revākhaṇḍa",
+"sections": 116,
+"verses": 6720
+}
+},
+"kurma": {
+"sa": {
+"title": "",
+"sections": 96,
+"verses": 5823
+}
+}
+}
