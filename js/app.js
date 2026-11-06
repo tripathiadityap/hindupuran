@@ -5,6 +5,8 @@ import {
 import { mountGraph } from "./graph.js";
 import { mountLotus, lotusSVG } from "./lotus.js";
 import { audio } from "./audio.js";
+import { readIndex, bindReadIndex, readView, bindRead, manifest } from "./reader.js";
+import { askView, bindAsk } from "./ask.js";
 
 const $ = (s, el = document) => el.querySelector(s);
 const app = $("#app");
@@ -65,6 +67,15 @@ function home() {
       <blockquote>“The highest dharma is that which awakens devotion to the Transcendent — unmotivated, unbroken — by which the self is completely at peace.”</blockquote>
       <cite>Bhāgavata Purāṇa 1.2.6 · <a class="accent" href="#/purana/bhagavata">Read about the Bhāgavata →</a></cite>
     </div>
+  </section>
+
+  <section class="section wrap"><span class="sec-id"></span>
+    <div class="section-head"><div><p class="eyebrow">Read · Ask</p><h2>All of it, in full.<br/><em>Ask it anything.</em></h2>
+      <p class="muted">1,29,000+ Sanskrit verses from fourteen Purāṇas, five complete English translations — and a search that finds passages by meaning.</p></div></div>
+    <form class="ask-form hud" onsubmit="event.preventDefault();location.hash='#/ask?q='+encodeURIComponent(this.q.value)">
+      <textarea name="q" rows="2" placeholder="Ask the Purāṇas… e.g. what happens after we die?"></textarea>
+      <div class="ask-row"><span class="mono muted">COSINE SIMILARITY · ON-DEVICE</span><span class="btns"><a class="btn" href="#/read">Open the reader</a><button class="btn primary" type="submit">Ask →</button></span></div>
+    </form>
   </section>
 
   <section class="section wrap"><span class="sec-id"></span>
@@ -158,6 +169,7 @@ function purana(id) {
         <dt>Length</dt><dd><div class="bar"><i style="width:${(p.verses / MAXV) * 100}%"></i></div>
           <span class="muted" style="font-size:13px">${((p.verses / TOTAL) * 100).toFixed(1)}% of the eighteen</span></dd>
       </dl>
+      <div id="readBtns" class="btns" style="flex-direction:column"></div>
       <a class="btn" href="#/explore?focus=p:${p.id}">See it on the map →</a>
     </aside>
   </section>`;
@@ -191,6 +203,7 @@ function garuda() {
         <h1>Garuḍa<br/>Purāṇa</h1>
         <p class="lede" style="margin:24px 0 28px">${esc(p.summary)}</p>
         <div class="p-meta" style="margin:0">${gunaPill(p.guna)}<span class="tag">${fmt(p.verses)} verses</span><span class="tag">${esc(p.speaker)}</span></div>
+        <div class="btns" style="margin-top:22px"><a class="btn primary" href="#/read/garuda/en/0">Read it in English →</a><a class="btn" href="#/read/garuda/sa/0">संस्कृत · 11,961 verses</a><a class="btn" href="#/ask?q=${encodeURIComponent("What happens to the soul after death?")}">Ask it →</a></div>
       </div>
       <div><div class="vision hud"><canvas data-lotus="garuda"></canvas></div>
         <div class="vision-cap"><span class="rec">Preta.track</span><span>Viṣṇu ↔ Garuḍa</span></div></div>
@@ -315,6 +328,7 @@ function reflect() {
       <div class="btns" style="margin-top:12px">
         <button class="btn primary" id="saveNote">Save reflection</button>
         <button class="btn" id="exportNotes">Export</button>
+        <button class="btn" id="askNote">Ask the texts →</button>
       </div>
       <div class="entries" id="entries"></div>
     </div>
@@ -353,6 +367,7 @@ function bindReflect() {
     const e = store.get("pv-notes", []); e.push({ at: Date.now(), text: note.value.trim() });
     store.set("pv-notes", e); note.value = ""; render(); renderList();
   };
+  $("#askNote").onclick = () => { if (note.value.trim()) location.hash = "#/ask?q=" + encodeURIComponent(note.value.trim().slice(0, 500)); };
   $("#exportNotes").onclick = () => {
     const e = store.get("pv-notes", []);
     const blob = new Blob([e.map(x => `## ${new Date(x.at).toLocaleString()}\n\n${x.text}\n`).join("\n")], { type: "text/markdown" });
@@ -366,9 +381,18 @@ function notFound() {
   return `<section class="wrap" style="padding-block:120px"><h1>Not found.</h1><p class="lede">Even Brahmā and Viṣṇu could not find the end of the pillar. <a class="accent" href="#/">Return home →</a></p></section>`;
 }
 
+async function bindPuranaRead(id) {
+  const el = $("#readBtns"); if (!el) return;
+  const m = await manifest().catch(() => ({})), e = m[id] || {};
+  el.innerHTML = (e.en ? `<a class="btn primary" href="#/read/${id}/en/0">Read in English · ${e.en.sections} sections →</a>` : "")
+    + (e.sa ? `<a class="btn" href="#/read/${id}/sa/0">Read in Sanskrit · ${e.sa.verses.toLocaleString("en-IN")} verses →</a>` : "")
+    + (!e.en && !e.sa ? `<span class="note">No openly licensed full text yet.</span>` : "");
+}
+function a_scrollNav() { document.querySelector(".nav a.active")?.scrollIntoView({ inline: "center", block: "nearest" }); }
+
 // ── Router ───────────────────────────────────────────
 let graph = null, lotuses = [];
-const RAGA_FOR = { "": "bhupali", library: "yaman", purana: "yaman", garuda: "bhairavi", explore: "malkauns", concepts: "bhupali", reflect: "bhairavi", theme: "yaman", deity: "yaman" };
+const RAGA_FOR = { "": "bhupali", library: "yaman", purana: "yaman", garuda: "bhairavi", explore: "malkauns", concepts: "bhupali", reflect: "bhairavi", theme: "yaman", deity: "yaman", read: "yaman", ask: "bhupali" };
 const cssColors = () => {
   const s = getComputedStyle(document.documentElement), v = k => s.getPropertyValue(k).trim();
   return { bg: v("--bg"), ink: v("--ink"), ink2: v("--ink-2"), muted: v("--muted"), line: v("--line"), accent: v("--accent"), sattvic: v("--sattvic"), rajasic: v("--rajasic"), tamasic: v("--tamasic") };
@@ -384,12 +408,15 @@ function route() {
     "": () => home(), library: () => library(params), purana: () => purana(parts[1]),
     garuda: () => garuda(), explore: () => explore(), concepts: () => concepts(), reflect: () => reflect(),
     theme: () => facet("theme", parts[1]), deity: () => facet("deity", parts[1]),
+    read: () => parts[1] ? readView(parts[1], parts[2] || "en", +(parts[3] || 0)) : readIndex(),
+    ask: () => askView(params.get("q")),
   };
   app.innerHTML = (views[top] || notFound)();
   document.querySelectorAll("[data-nav]").forEach(a => a.classList.toggle("active",
     a.dataset.nav === top || (top === "purana" && a.dataset.nav === "library") || (top === "purana" && parts[1] === "garuda" && a.dataset.nav === "garuda")));
+  a_scrollNav();
   document.body.style.overflow = "";
-  const titles = { library: "Library", garuda: "Garuḍa Purāṇa", explore: "Explore", concepts: "Concepts", reflect: "Reflect", purana: byId[parts[1]]?.name, theme: THEMES[parts[1]]?.label, deity: DEITIES[parts[1]] };
+  const titles = { library: "Library", garuda: "Garuḍa Purāṇa", explore: "Explore", concepts: "Concepts", reflect: "Reflect", read: "Read", ask: "Ask", purana: byId[parts[1]]?.name, theme: THEMES[parts[1]]?.label, deity: DEITIES[parts[1]] };
   document.title = (titles[top] ? titles[top] + " · " : "") + "Purāṇa Viśva";
   if (top === "explore") {
     document.querySelector(".footer").hidden = true;
@@ -403,6 +430,9 @@ function route() {
     document.querySelector(".footer").hidden = false;
   }
   if (top === "reflect") bindReflect();
+  if (top === "read") parts[1] ? bindRead(app, parts[1], parts[2] || "en", +(parts[3] || 0), params) : bindReadIndex(app);
+  if (top === "ask") bindAsk(app, params.get("q"));
+  if (top === "purana") bindPuranaRead(parts[1]);
   app.querySelectorAll("[data-lotus]").forEach(cv => {
     const kind = cv.dataset.lotus;
     const opts = kind === "garuda"
@@ -412,7 +442,7 @@ function route() {
   });
   app.querySelectorAll(".sec-id").forEach((el, i) => { el.textContent = `SEC_${String(i + 1).padStart(2, "0")} // ${(top || "home").toUpperCase()}`; });
   audio.setRaga(RAGA_FOR[top] || "bhupali");
-  if (!params.has("focus")) window.scrollTo(0, 0);
+  if (!params.has("focus") && !params.has("hl")) window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", route);
 route();
@@ -444,9 +474,11 @@ const sEl = $("#search"), sIn = $("#searchInput"), sOut = $("#searchResults");
 let sel = 0, results = [];
 function runSearch() {
   const q = fold(sIn.value.trim());
+  const askItem = sIn.value.trim() ? [{ t: `Ask the Purāṇas: “${sIn.value.trim()}”`, s: "Semantic search across the full texts", k: "Ask", h: `#/ask?q=${encodeURIComponent(sIn.value.trim())}` }] : [];
   results = !q ? INDEX.filter(i => i.k === "Purāṇa").slice(0, 8)
     : INDEX.map(i => ({ i, sc: i.f.startsWith(q) ? 3 : i.f.includes(q) ? 2 : q.split(/\s+/).every(w => i.fx.includes(w)) ? 1 : 0 }))
       .filter(r => r.sc).sort((a, b) => b.sc - a.sc).slice(0, 12).map(r => r.i);
+  results = [...askItem, ...results];
   sel = 0;
   sOut.innerHTML = results.length ? results.map((r, n) => `<li><a href="${r.h}" class="${n === 0 ? "sel" : ""}"><span>${esc(r.t)}${r.s ? `<span class="sub">${esc(r.s.slice(0, 90))}</span>` : ""}</span><small>${r.k}</small></a></li>`).join("")
     : `<li class="muted" style="padding:14px">Nothing found.</li>`;
